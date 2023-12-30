@@ -1,15 +1,15 @@
 <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
-    </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
+  <div class="float-right d-none d-sm-block">
+    <b>Version</b> 3.2.0
+  </div>
+  <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+</footer>
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+  <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
 
@@ -25,20 +25,13 @@
 <script src="../assets/dist/js/demo.js"></script>
 <!-- My javascript -->
 <script>
-    $(document).ready(function() {
-      function deleteUser(name) {
-        pesan = confirm(`Are you sure you wanna delete this '${name}' ?`);
-        return pesan
-      }
+  $(document).ready(function() {
 
-      function deleteArtikel(judul) {
-        pesan = confirm(`Are you sure you wanna delete this '${judul}' ?`);
-        return pesan
-      }
+    $('#summernote').summernote();
 
-      $('#summernote').summernote();
-    });
+  });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </body>
+
 </html>

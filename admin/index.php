@@ -38,6 +38,7 @@ if (isset($_POST['submit'])) {
 
     // cek apakah menambah artikel berhasil
     if ($insert) {
+      $_SESSION['msg'] = 'Berhasil menambah artikel';
       header("Location: index.php");
       exit();
     } else {
@@ -82,6 +83,7 @@ if (isset($_POST['update'])) {
       $update = $conn->query($sql);
 
       if ($update) {
+        $_SESSION['msg'] = 'Berhasil mengupdate artikel';
         header("Location: index.php");
         exit();
       } else {
@@ -96,6 +98,7 @@ if (isset($_POST['update'])) {
     $update = $conn->query($sql);
 
     if ($update) {
+      $_SESSION['msg'] = 'Berhasil mengupdate artikel';
       header("Location: index.php");
       exit();
     } else {
@@ -120,6 +123,7 @@ if (isset($_POST['hapus'])) {
   $delete = $conn->query($sql);
 
   if ($delete) {
+    $_SESSION['msg'] = 'Berhasil menghapus artikel';
     header("Location: index.php");
     exit();
   } else {
@@ -155,6 +159,13 @@ if (isset($_POST['hapus'])) {
       </div>
       <div class="card-body">
         <a href="" class="btn btn-sm btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModalTambah">+ Tambah</a>
+        <?php if (isset($_SESSION['msg'])) : ?>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $_SESSION['msg']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <?php unset($_SESSION['msg']); ?>
+        <?php endif; ?>
         <div class="card">
           <div class="card-body table-responsive p-0">
             <table class="table table-hover text-nowrap text-center">
@@ -208,6 +219,12 @@ if (isset($_POST['hapus'])) {
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script>
+  function deleteArtikel(judul) {
+    pesan = confirm(`Are you sure you wanna delete this '${judul}' ?`);
+    return pesan
+  }
+</script>
 
 
 <?php
@@ -215,152 +232,152 @@ include('template/footer.php');
 ?>
 
 
-  <!-- Modal Edit -->
-  <?php foreach ($result as $item) : ?>
-    <div class="modal fade" id="exampleModalEdit-<?= $item['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Edit Artikel</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal Tambah -->
+<div class="modal fade" id="exampleModalTambah" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Tambah Artikel</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="judul">Judul Artikel</label>
+            <input type="text" class="form-control" name="judul" id="judul" placeholder="Masukkan judul">
           </div>
-          <div class="modal-body">
-            <form method="POST" enctype="multipart/form-data">
-              <input type="hidden" name="id" value="<?= $item['id'] ?>">
-              <div class="form-group">
-                <label for="judul">Judul Artikel</label>
-                <input type="text" class="form-control" name="judul" id="judul" value="<?= $item['judul']  ?>">
-              </div>
-              <div class="form-group">
-                <label for="deskripsi">Deskripsi Artikel</label>
-                <input type="text" class="form-control" name="deskripsi" id="deskripsi" value="<?= $item['deskripsi']  ?>">
-              </div>
-              <div class="form-group">
-                <label for="deskripsi">Isi Artikel</label>
-                <textarea id="summernote-<?= $item['id'] ?>" name="isi">
-                <?= $item['isi']  ?>
+          <div class="form-group">
+            <label for="deskripsi">Deskripsi Artikel</label>
+            <input type="text" class="form-control" name="deskripsi" id="deskripsi" placeholder="Masukkan deskripsi">
+          </div>
+          <div class="form-group">
+            <label for="isi">Isi Artikel</label>
+            <textarea id="summernote" name="isi">
+                    Masukkan isi artikel
               </textarea>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputFile">Gambar</label>
+            <div class="input-group">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="gambar" id="exampleInputFile">
+                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
               </div>
-              <div class="form-group">
-                <label for="exampleInputFile">Gambar</label>
-                <div class="input-group">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="gambar" id="exampleInputFile" value="<?= $item['gambar']  ?>">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status" class="form-control" required>
+              <option selected disabled>Pilih Status</option>
+              <option value="publish">Publish</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Edit -->
+<?php foreach ($result as $edit) : ?>
+  <div class="modal fade" id="exampleModalEdit-<?= $edit['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Edit Artikel</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<?= $edit['id'] ?>">
+            <div class="form-group">
+              <label for="judul">Judul Artikel</label>
+              <input type="text" class="form-control" name="judul" id="judul" value="<?= $edit['judul']  ?>">
+            </div>
+            <div class="form-group">
+              <label for="deskripsi">Deskripsi Artikel</label>
+              <input type="text" class="form-control" name="deskripsi" id="deskripsi" value="<?= $edit['deskripsi']  ?>">
+            </div>
+            <div class="form-group">
+              <label for="deskripsi">Isi Artikel</label>
+              <textarea id="summernote-<?= $edit['id'] ?>" name="isi">
+                <?= $edit['isi']  ?>
+              </textarea>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputFile">Gambar</label>
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" name="gambar" id="exampleInputFile" value="<?= $edit['gambar']  ?>">
+                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="status">Status</label>
-                <select name="status" id="status" class="form-control" required>
-                  <option selected disabled>Pilih Status</option>
-                  <option value="publish" <?php echo ($item['status'] == 'publish') ? 'selected' : ''; ?>>Publish</option>
-                  <option value="draft" <?php echo ($item['status'] == 'draft') ? 'selected' : ''; ?>>Draft</option>
-                </select>
-              </div>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer">
-            <button type="submit" name="update" class="btn btn-primary">Update</button>
-          </div>
-          </form>
+            </div>
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select name="status" id="status" class="form-control" required>
+                <option selected disabled>Pilih Status</option>
+                <option value="publish" <?php echo ($edit['status'] == 'publish') ? 'selected' : ''; ?>>Publish</option>
+                <option value="draft" <?php echo ($edit['status'] == 'draft') ? 'selected' : ''; ?>>Draft</option>
+              </select>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          <button type="submit" name="update" class="btn btn-primary">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    $('#summernote-<?= $edit['id'] ?>').summernote();
+  </script>
+<?php endforeach; ?>
+
+<!-- Modal Detail -->
+<?php foreach ($result as $item) : ?>
+  <div class="modal fade" id="exampleModalDetail-<?= $item['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Edit Artikel</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group">
+            <li class="list-group-item text-center">
+              <img src="../assets/img/<?= $item['gambar']; ?>" width="100">
+            </li>
+            <li class="list-group-item">
+              <label class="d-block">Judul</label>
+              <?= $item['judul']; ?>
+            </li>
+            <li class="list-group-item">
+              <label class="d-block">Deskripsi</label>
+              <?= $item['deskripsi']; ?>
+            </li>
+            <li class="list-group-item">
+              <label class="d-block">Isi</label>
+              <?= $item['isi']; ?>
+            </li>
+            <li class="list-group-item">
+              <label class="d-block">Status</label>
+              <?= $item['status']; ?>
+            </li>
+            <li class="list-group-item">
+              <label class="d-block">Penulis</label>
+              <?= $item['name']; ?>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <script>
-      $('#summernote-<?= $item['id'] ?>').summernote();
-    </script>
-  <?php endforeach; ?>
-
-  <!-- Modal Detail -->
-  <?php foreach ($result as $item) : ?>
-    <div class="modal fade" id="exampleModalDetail-<?= $item['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Edit Artikel</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <ul class="list-group">
-              <li class="list-group-item text-center">
-                <img src="../assets/img/<?= $item['gambar']; ?>" width="100">
-              </li>
-              <li class="list-group-item">
-                <label class="d-block">Judul</label>
-                <?= $item['judul']; ?>
-              </li>
-              <li class="list-group-item">
-                <label class="d-block">Deskripsi</label>
-                <?= $item['deskripsi']; ?>
-              </li>
-              <li class="list-group-item">
-                <label class="d-block">Isi</label>
-                <?= $item['isi']; ?>
-              </li>
-              <li class="list-group-item">
-                <label class="d-block">Status</label>
-                <?= $item['status']; ?>
-              </li>
-              <li class="list-group-item">
-                <label class="d-block">Penulis</label>
-                <?= $item['name']; ?>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-  <?php endforeach; ?>
-
-
-  <!-- Modal Tambah -->
-  <div class="modal fade" id="exampleModalTambah" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Tambah Artikel</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form method="POST" enctype="multipart/form-data">
-              <div class="form-group">
-                <label for="judul">Judul Artikel</label>
-                <input type="text" class="form-control" name="judul" id="judul" placeholder="Masukkan judul">
-              </div>
-              <div class="form-group">
-                <label for="deskripsi">Deskripsi Artikel</label>
-                <input type="text" class="form-control" name="deskripsi" id="deskripsi" placeholder="Masukkan deskripsi">
-              </div>
-              <div class="form-group">
-                <label for="isi">Isi Artikel</label>
-                <textarea id="summernote" name="isi">
-                    Masukkan isi artikel
-              </textarea>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputFile">Gambar</label>
-                <div class="input-group">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="gambar" id="exampleInputFile">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="status">Status</label>
-                <select name="status" id="status" class="form-control" required>
-                  <option selected disabled>Pilih Status</option>
-                  <option value="publish">Publish</option>
-                  <option value="draft">Draft</option>
-                </select>
-              </div>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer">
-            <button type="submit" name="submit" class="btn btn-primary">Submit</button>
-          </div>
-          </form>
-        </div>
-      </div>
   </div>
-
+<?php endforeach; ?>
