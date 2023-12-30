@@ -19,8 +19,10 @@ if (isset($_POST['submit'])) {
   $name = $_POST['name'];
   $username = $_POST['username'];
   $password = md5($_POST['password']);
+  $created = date('Y-m-d H:i:s');
+  $updated = date('Y-m-d H:i:s');
 
-  $sql = 'INSERT INTO tb_user (`name`, `username`, `password`) VALUES ("' . $name . '", "' . $username . '", "' . $password . '")';
+  $sql = 'INSERT INTO tb_user (`name`, `username`, `password`, `created_at`, `updated_at`) VALUES ("' . $name . '", "' . $username . '", "' . $password . '", "' . $created . '", "' . $updated . '")';
   $insert = $conn->query($sql);
 
   if ($insert) {
@@ -37,9 +39,10 @@ if (isset($_POST['update'])) {
   $id = $_POST['id'];
   $name = $_POST['name'];
   $username = $_POST['username'];
+  $updated = date('Y-m-d H:i:s');
 
   // melakukan query update berdasarkan $id
-  $sql = "UPDATE `tb_user` SET `name`='$name', `username`='$username' WHERE `id`='$id'";
+  $sql = "UPDATE `tb_user` SET `name`='$name', `username`='$username', `updated_at`='$updated' WHERE `id`='$id'";
   $update = $conn->query($sql);
 
   if ($update) {

@@ -21,6 +21,8 @@ if (isset($_POST['submit'])) {
   $isi = $_POST['isi'];
   $status = $_POST['status'];
   $id_user = $_SESSION['id'];
+  $created = date('Y-m-d H:i:s');
+  $updated = date('Y-m-d H:i:s');
 
   // pemrosesan gambar
   $gambar = $_FILES['gambar']['name'];
@@ -29,9 +31,9 @@ if (isset($_POST['submit'])) {
 
   if (move_uploaded_file($gambar_temp, $gambar_path)) {
     // jika gambar berhasil diunggah, tambahkan ke database
-    $sql = 'INSERT INTO tb_artikel (`judul`, `deskripsi`, `isi`, `gambar`, `status`, `id_user`) VALUES (?, ?, ?, ?, ?, ?)';
+    $sql = 'INSERT INTO tb_artikel (`judul`, `deskripsi`, `isi`, `gambar`, `status`, `id_user`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sssssi', $judul, $deskripsi, $isi, $gambar, $status, $id_user);
+    $stmt->bind_param('sssssiss', $judul, $deskripsi, $isi, $gambar, $status, $id_user);
 
     // jalankan statement
     $insert = $stmt->execute();
@@ -59,6 +61,7 @@ if (isset($_POST['update'])) {
   $deskripsi = $_POST['deskripsi'];
   $isi = $_POST['isi'];
   $status = $_POST['status'];
+  $updated = date('Y-m-d H:i:s');
 
   // cek jika ada gambar baru
   if ($_FILES['gambar']['name'] != "") {
@@ -79,7 +82,7 @@ if (isset($_POST['update'])) {
       }
 
       // update artikel jika ada gambar baru
-      $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `gambar`='$gambar', `status`='$status' WHERE `id`='$id'";
+      $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `gambar`='$gambar', `status`='$status', `updated_at`='$updated' WHERE `id`='$id'";
       $update = $conn->query($sql);
 
       if ($update) {
@@ -94,7 +97,7 @@ if (isset($_POST['update'])) {
     }
   } else {
     // update artikel jikda tidak ada gambar baru
-    $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `status`='$status' WHERE `id`='$id'";
+    $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `status`='$status', `updated_at`='$updated' WHERE `id`='$id'";
     $update = $conn->query($sql);
 
     if ($update) {
