@@ -33,7 +33,7 @@ if (isset($_POST['submit'])) {
     // jika gambar berhasil diunggah, tambahkan ke database
     $sql = 'INSERT INTO tb_artikel (`judul`, `deskripsi`, `isi`, `gambar`, `status`, `id_user`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sssssiss', $judul, $deskripsi, $isi, $gambar, $status, $id_user);
+    $stmt->bind_param('sssssiss', $judul, $deskripsi, $isi, $gambar, $status, $id_user, $created, $updated);
 
     // jalankan statement
     $insert = $stmt->execute();
@@ -82,8 +82,10 @@ if (isset($_POST['update'])) {
       }
 
       // update artikel jika ada gambar baru
-      $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `gambar`='$gambar', `status`='$status', `updated_at`='$updated' WHERE `id`='$id'";
-      $update = $conn->query($sql);
+      $sql = "UPDATE `tb_artikel` SET `judul`=?, `deskripsi`=?, `isi`=?, `gambar`=?, `status`=?, `updated_at`=? WHERE `id`=?";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param('ssssssi', $judul, $deskripsi, $isi, $gambar, $status, $updated, $id);
+      $stmt->execute();
 
       if ($update) {
         $_SESSION['msg'] = 'Berhasil mengupdate artikel';
@@ -97,8 +99,10 @@ if (isset($_POST['update'])) {
     }
   } else {
     // update artikel jikda tidak ada gambar baru
-    $sql = "UPDATE `tb_artikel` SET `judul`='$judul', `deskripsi`='$deskripsi', `isi`='$isi', `status`='$status', `updated_at`='$updated' WHERE `id`='$id'";
-    $update = $conn->query($sql);
+    $sql = "UPDATE `tb_artikel` SET `judul`=?, `deskripsi`=?, `isi`=?, `status`=?, `updated_at`=? WHERE `id`=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('sssssi', $judul, $deskripsi, $isi, $status, $updated, $id);
+    $update = $stmt->execute();
 
     if ($update) {
       $_SESSION['msg'] = 'Berhasil mengupdate artikel';
