@@ -85,7 +85,7 @@ if (isset($_POST['update'])) {
       $sql = "UPDATE `tb_artikel` SET `judul`=?, `deskripsi`=?, `isi`=?, `gambar`=?, `status`=?, `updated_at`=? WHERE `id`=?";
       $stmt = $conn->prepare($sql);
       $stmt->bind_param('ssssssi', $judul, $deskripsi, $isi, $gambar, $status, $updated, $id);
-      $stmt->execute();
+      $update = $stmt->execute();
 
       if ($update) {
         $_SESSION['msg'] = 'Berhasil mengupdate artikel';
