@@ -1,15 +1,9 @@
-<?php 
-session_start();
+<?php
+
 include('koneksi.php');
 
-if (!isset($_SESSION["login"])) {
-    header("Location: login.php");
-    exit;
-}
+$sql = "SELECT * FROM tb_artikel";
+$result = $conn->query($sql);
 
-?>
-
-
-<h1>berhasil login</h1>
-
-<a href="logout.php">Logout</a>
+var_dump($result);
+die();

@@ -29,6 +29,7 @@ if (isset($_POST['login'])) {
                  // login berhasil
                 session_start();
                 $_SESSION['login'] = true;
+                $_SESSION['id'] = $row['id'];
                 header('Location: admin/index.php');
                 exit();
             }

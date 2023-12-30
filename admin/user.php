@@ -37,7 +37,7 @@ if (isset($_POST['update'])) {
   $name = $_POST['name'];
   $username = $_POST['username'];
 
-  // Lakukan query update berdasarkan $id
+  // melakukan query update berdasarkan $id
   $sql = "UPDATE `tb_user` SET `name`='$name', `username`='$username' WHERE `id`='$id'";
   $update = $conn->query($sql);
 
@@ -113,7 +113,7 @@ if (isset($_POST['hapus'])){
                     <td><?= $item['username']; ?></td>
                     <td>
                       <a href="#" class="btn btn-md btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalEdit-<?= $item['id'] ?>"><i class="nav-icon fas fa-edit"></i></a>
-                      <form action="user.php" onsubmit="return deleteData('<?= $item['name'] ?>')" method="POST" class="d-inline">
+                      <form action="user.php" onsubmit="return deleteUser('<?= $item['name'] ?>')" method="POST" class="d-inline">
                       <input type="hidden" name="id" value="<?= $item['id'] ?>">
                         <button type="submit" name="hapus" class="btn btn-danger">
                            <i class="fas fa-trash"></i>

@@ -23,21 +23,22 @@
 <script src="../assets/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../assets/dist/js/demo.js"></script>
-<!-- Summernote -->
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <!-- My javascript -->
 <script>
-$(document).ready(function() {
-  function deleteData(name) {
-    pesan = confirm(`Are you sure you wanna delete this '${name}' ?`);
-    return pesan
-  }
+    $(document).ready(function() {
+      function deleteUser(name) {
+        pesan = confirm(`Are you sure you wanna delete this '${name}' ?`);
+        return pesan
+      }
 
-  $('#summernote').summernote();
-});
+      function deleteArtikel(judul) {
+        pesan = confirm(`Are you sure you wanna delete this '${judul}' ?`);
+        return pesan
+      }
 
-
-
+      $('#summernote').summernote();
+    });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </body>
 </html>
