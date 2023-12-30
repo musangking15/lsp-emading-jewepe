@@ -77,9 +77,6 @@ if (isset($_POST['hapus'])) {
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Users</h1>
-        </div>
       </div>
     </div><!-- /.container-fluid -->
   </section>
@@ -90,6 +87,7 @@ if (isset($_POST['hapus'])) {
     <!-- Default box -->
     <div class="card">
       <div class="card-header">
+        <p class="card-title fs-4 fw-semibold">Users</p>
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
             <i class="fas fa-minus"></i>

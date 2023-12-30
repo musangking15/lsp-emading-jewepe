@@ -145,9 +145,6 @@ if (isset($_POST['hapus'])) {
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Artikel</h1>
-        </div>
       </div>
     </div><!-- /.container-fluid -->
   </section>
@@ -158,6 +155,7 @@ if (isset($_POST['hapus'])) {
     <!-- Default box -->
     <div class="card">
       <div class="card-header">
+        <p class="card-title fs-4 fw-semibold">Artikel</p>
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
             <i class="fas fa-minus"></i>
@@ -354,7 +352,7 @@ include('template/footer.php');
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Edit Artikel</h1>
+          <h1 class="modal-title fs-2 fw-bold" id="exampleModalLabel">Detail Artikel</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
