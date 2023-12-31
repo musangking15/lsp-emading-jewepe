@@ -11,20 +11,18 @@ include('koneksi.php');
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Query untuk mendapatkan data artikel berdasarkan id
+    // query untuk mendapatkan data artikel berdasarkan id
     $sql = "SELECT u.*, a.* FROM tb_artikel a JOIN tb_user u ON a.id_user = u.id WHERE a.id = $id";
     $result = $conn->query($sql);
 
-    // Periksa apakah data ditemukan
+    // periksa apakah data ditemukan
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
     } else {
-        // Redirect ke halaman utama jika data tidak ditemukan
         header("Location: index.php");
         exit();
     }
 } else {
-    // Redirect ke halaman utama jika tidak ada parameter id
     header("Location: index.php");
     exit();
 }
@@ -45,10 +43,8 @@ if (isset($_GET['id'])) {
                     <div class="mb-4">
                         <h2 class="pt-2 tm-color-primary tm-post-title"><?= $data['judul']; ?></h2>
                         <?php
-                        // Convert the database datetime to a DateTime object
+                        // mengonversi datetime basis data menjadi objek DateTime
                         $createdAt = new DateTime($data['created_at']);
-
-                        // Format the DateTime object as "D, d M Y" (day, date month year)
                         $formattedCreatedAt = $createdAt->format('D, d M Y');
                         ?>
                         <p class="tm-mb-40"><?= $formattedCreatedAt; ?> posted by <?= $data['name']; ?></p>

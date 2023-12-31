@@ -31,10 +31,8 @@ $result = $conn->query($sql);
                     <div class="d-flex justify-content-between tm-pt-45">
                         <a href="detail.php?id=<?= $value['id']; ?>" class="btn btn-primary">Detail</a>
                         <?php
-                        // Convert the database datetime to a DateTime object
+                        // mengonversi datetime basis data menjadi objek DateTime
                         $createdAt = new DateTime($value['created_at']);
-
-                        // Format the DateTime object as "D, d M Y" (day, date month year)
                         $formattedCreatedAt = $createdAt->format('D, d M Y');
                         ?>
                         <span class="tm-color-primary"><?= $formattedCreatedAt; ?></span>
