@@ -10,63 +10,59 @@ include('template/sidebar_user.php');
 
 include('../koneksi.php');
 
+include('../functions.php');
+
 // mengambil data dari tabel user
 $sql = "SELECT * FROM tb_user";
 $result = $conn->query($sql);
 
-// menambahkan data
+// menambahkan data ke tabel user
 if (isset($_POST['submit'])) {
   $name = $_POST['name'];
   $username = $_POST['username'];
-  $password = md5($_POST['password']);
+  $password = $_POST['password'];
   $created = date('Y-m-d H:i:s');
   $updated = date('Y-m-d H:i:s');
+  $msgSuccess = 'Berhasil menambahkan data user';
+  $msgFailure = 'Gagal menambahkan data user';
 
-  $sql = 'INSERT INTO tb_user (`name`, `username`, `password`, `created_at`, `updated_at`) VALUES ("' . $name . '", "' . $username . '", "' . $password . '", "' . $created . '", "' . $updated . '")';
-  $insert = $conn->query($sql);
+  // melakukan query insert
+  $sql = 'INSERT INTO tb_user (`name`, `username`, `password`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?)';
+  $params = ['sssss', $name, $username, md5($password), $created, $updated];
 
-  if ($insert) {
-    $_SESSION['msg'] = 'Berhasil menambahkan data user';
-    header("Location: user.php");
-    exit();
-  } else {
-    echo 'Tambah user gagal!';
-  }
+  // menjalankan fungsi insertUser
+  insertUser($conn, $sql, $params, $msgSuccess, $msgFailure);
 }
 
-// mengedit data
+// mengupdate data user dari tabel user berdasarkan id
 if (isset($_POST['update'])) {
   $id = $_POST['id'];
   $name = $_POST['name'];
   $username = $_POST['username'];
   $updated = date('Y-m-d H:i:s');
+  $msgSuccess = 'Berhasil mengupdate data user';
+  $msgFailure = 'Gagal mengupdate data user';
 
   // melakukan query update berdasarkan $id
-  $sql = "UPDATE `tb_user` SET `name`='$name', `username`='$username', `updated_at`='$updated' WHERE `id`='$id'";
-  $update = $conn->query($sql);
+  $sql = "UPDATE tb_user SET `name`=?, `username`=?, `updated_at`=? WHERE `id`=?";
+  $params = ['sssi', $name, $username, $updated, $id];
 
-  if ($update) {
-    $_SESSION['msg'] = 'Berhasil mengupdate data user';
-    header("Location: user.php");
-    exit();
-  } else {
-    echo 'Edit user gagal!';
-  }
+  // menjalankan fungsi updateUser
+  updateUser($conn, $sql, $params, $msgSuccess, $msgFailure);
 }
 
-// menghapus data
+// menghapus data user dari tabel user berdasarkan id
 if (isset($_POST['hapus'])) {
   $id = $_POST['id'];
-  $sql = "DELETE FROM tb_user WHERE id = $id";
-  $delete = $conn->query($sql);
+  $msgSuccess = 'Berhasil menghapus data user';
+  $msgFailure = 'Gagal menghapus data user';
 
-  if ($delete) {
-    $_SESSION['msg'] = 'Berhasil menghapus data user';
-    header("Location: user.php");
-    exit();
-  } else {
-    echo 'Hapus user gagal!';
-  }
+   // melakukan query delete berdasarkan $id
+  $sql = "DELETE FROM tb_user WHERE `id`=?";
+  $params = ['i', $id];
+
+  // menjalankan fungsi deleteUser
+  deleteUser($conn, $sql, $params, $msgSuccess, $msgFailure);
 }
 
 ?>
@@ -96,12 +92,19 @@ if (isset($_POST['hapus'])) {
       </div>
       <div class="card-body">
         <a href="#" class="btn btn-sm btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModalTambah">+ Tambah</a>
-        <?php if (isset($_SESSION['msg'])) : ?>
+        <?php if (isset($_SESSION['msgSuccess'])) : ?>
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= $_SESSION['msg']; ?>
+            <?= $_SESSION['msgSuccess']; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
-          <?php unset($_SESSION['msg']); ?>
+          <?php unset($_SESSION['msgSuccess']); ?>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['msgFailure'])) : ?>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= $_SESSION['msgFailure']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <?php unset($_SESSION['msgFailure']); ?>
         <?php endif; ?>
         <div class="card">
           <div class="card-body table-responsive p-0">

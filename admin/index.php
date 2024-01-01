@@ -10,11 +10,13 @@ include('template/sidebar_artikel.php');
 
 include('../koneksi.php');
 
+include('../functions.php');
+
+// mengambil data dari tabel artikel
 $sql = "SELECT u.*, a.* FROM tb_artikel a JOIN tb_user u ON a.id_user = u.id";
 $result = $conn->query($sql);
-$row = $result->fetch_assoc();
 
-// menambahkan artikel
+// menambahkan data ke tabel artikel
 if (isset($_POST['submit'])) {
   $judul = $_POST['judul'];
   $deskripsi = $_POST['deskripsi'];
@@ -23,38 +25,28 @@ if (isset($_POST['submit'])) {
   $id_user = $_SESSION['id'];
   $created = date('Y-m-d H:i:s');
   $updated = date('Y-m-d H:i:s');
+  $msgSuccess = 'Berhasil menambahkan artikel';
+  $msgFailure = 'Gagal menambahkan artikel';
 
   // pemrosesan gambar
   $gambar = $_FILES['gambar']['name'];
   $gambar_temp = $_FILES['gambar']['tmp_name'];
   $gambar_path = '../assets/img/' . $gambar;
 
-  if (move_uploaded_file($gambar_temp, $gambar_path)) {
-    // jika gambar berhasil diunggah, tambahkan ke database
+  // jika gambar berhasil diunggah maka jalankan fungsi uploadImage
+  if (uploadImage($gambar_temp, $gambar_path)) {
     $sql = 'INSERT INTO tb_artikel (`judul`, `deskripsi`, `isi`, `gambar`, `status`, `id_user`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sssssiss', $judul, $deskripsi, $isi, $gambar, $status, $id_user, $created, $updated);
+    $params = ['sssssiss', $judul, $deskripsi, $isi, $gambar, $status, $id_user, $created, $updated];
 
-    // jalankan statement
-    $insert = $stmt->execute();
+    // menjalankan fungsi insertArtikel
+    insertArtikel($conn, $sql, $params, $msgSuccess, $msgFailure);
 
-    // cek apakah menambah artikel berhasil
-    if ($insert) {
-      $_SESSION['msg'] = 'Berhasil menambah artikel';
-      header("Location: index.php");
-      exit();
-    } else {
-      echo 'Tambah artikel gagal!';
-    }
-
-    // tutup statemnet
-    $stmt->close();
   } else {
     echo 'Gagal mengunggah gambar!';
   }
 }
 
-// mengedit artikel
+// mengupdate data artikel dari tabel user berdasarkan id
 if (isset($_POST['update'])) {
   $id = $_POST['id'];
   $judul = $_POST['judul'];
@@ -62,6 +54,8 @@ if (isset($_POST['update'])) {
   $isi = $_POST['isi'];
   $status = $_POST['status'];
   $updated = date('Y-m-d H:i:s');
+  $msgSuccess = 'Berhasil mengupdate artikel';
+  $msgFailure = 'Gagal mengupdate artikel';
 
   // cek jika ada gambar baru
   if ($_FILES['gambar']['name'] != "") {
@@ -74,68 +68,52 @@ if (isset($_POST['update'])) {
     $resultImage = $conn->query($sqlImg);
     $img = $resultImage->fetch_assoc();
     $old_image_path = '../assets/img/' . $img['gambar'];
-    // memindahkan gambar baru ke folder
-    if (move_uploaded_file($gambar_temp, $gambar_path)) {
-      // menghapus gambar lama dari folder
-      if (file_exists($old_image_path)) {
-        unlink($old_image_path);
-      }
 
-      // update artikel jika ada gambar baru
+    // memindahkan gambar baru ke folder dengan menjalankan fungsi uploadImage
+    if (uploadImage($gambar_temp, $gambar_path)) {
+      // menghapus gambar lama dari folder dengan menjalankan fungsi deleteImage
+      deleteImage($old_image_path);
+
+      // update artikel jika ada gambar baru dan melakukan query update berdasarkan $id
       $sql = "UPDATE `tb_artikel` SET `judul`=?, `deskripsi`=?, `isi`=?, `gambar`=?, `status`=?, `updated_at`=? WHERE `id`=?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param('ssssssi', $judul, $deskripsi, $isi, $gambar, $status, $updated, $id);
-      $update = $stmt->execute();
+      $params = ['ssssssi', $judul, $deskripsi, $isi, $gambar, $status, $updated, $id];
 
-      if ($update) {
-        $_SESSION['msg'] = 'Berhasil mengupdate artikel';
-        header("Location: index.php");
-        exit();
-      } else {
-        echo 'Edit artikel gagal!';
-      }
+      // menjalankan fungsi updateArtikel
+      updateArtikel($conn, $sql, $params, $msgSuccess, $msgFailure);
+      
     } else {
       echo 'Gagal mengunggah gambar baru!';
     }
   } else {
-    // update artikel jikda tidak ada gambar baru
+    // update artikel jikda tidak ada gambar baru dan melakukan query update berdasarkan $id
     $sql = "UPDATE `tb_artikel` SET `judul`=?, `deskripsi`=?, `isi`=?, `status`=?, `updated_at`=? WHERE `id`=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sssssi', $judul, $deskripsi, $isi, $status, $updated, $id);
-    $update = $stmt->execute();
+    $params = ['sssssi', $judul, $deskripsi, $isi, $status, $updated, $id];
 
-    if ($update) {
-      $_SESSION['msg'] = 'Berhasil mengupdate artikel';
-      header("Location: index.php");
-      exit();
-    } else {
-      echo 'Edit artikel gagal!';
-    }
+    // menjalankan fungsi updateArtikel
+    updateArtikel($conn, $sql, $params, $msgSuccess, $msgFailure);
   }
 }
 
 // menghapus artikel
 if (isset($_POST['hapus'])) {
   $id = $_POST['id'];
+  $msgSuccess = 'Berhasil menghapus data artikel';
+  $msgFailure = 'Gagal menghapus data artikel';
+
 
   $sqlImg = "SELECT gambar FROM tb_artikel WHERE id = $id";
   $resultImage = $conn->query($sqlImg);
   $img = $resultImage->fetch_assoc();
   $old_image_path = '../assets/img/' . $img['gambar'];
-  if (file_exists($old_image_path)) {
-    unlink($old_image_path);
-  }
 
-  $sql = "DELETE FROM tb_artikel WHERE id = $id";
-  $delete = $conn->query($sql);
+  // menjalankan fungsi deleteImage
+  deleteImage($old_image_path);
 
-  if ($delete) {
-    $_SESSION['msg'] = 'Berhasil menghapus artikel';
-    header("Location: index.php");
-    exit();
-  } else {
-    echo 'Hapus user gagal!';
-  }
+  // melakukan query delete berdasarkan $id
+  $sql = "DELETE FROM tb_artikel WHERE `id`=?";
+  $params = ['i', $id];
+
+  deleteArtikel($conn, $sql, $params, $msgSuccess, $msgFailure);
 }
 ?>
 
@@ -164,12 +142,19 @@ if (isset($_POST['hapus'])) {
       </div>
       <div class="card-body">
         <a href="" class="btn btn-sm btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModalTambah">+ Tambah</a>
-        <?php if (isset($_SESSION['msg'])) : ?>
+        <?php if (isset($_SESSION['msgSuccess'])) : ?>
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= $_SESSION['msg']; ?>
+            <?= $_SESSION['msgSuccess']; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
-          <?php unset($_SESSION['msg']); ?>
+          <?php unset($_SESSION['msgSuccess']); ?>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['msgFailure'])) : ?>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= $_SESSION['msgFailure']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <?php unset($_SESSION['msgFailure']); ?>
         <?php endif; ?>
         <div class="card">
           <div class="card-body table-responsive p-0">

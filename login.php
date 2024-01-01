@@ -16,7 +16,7 @@ if (isset($_POST['login'])) {
 
   // cek inputan tidak boleh kosong
   if (empty($_POST['username']) || empty($_POST['password'])) {
-    $_SESSION['msg'] = 'Field tidak boleh kosong';
+    $_SESSION['msg'] = 'Silahkan isi username dan password';
     header('Location: login.php');
     exit();
   } else {
