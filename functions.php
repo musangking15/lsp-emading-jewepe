@@ -58,7 +58,7 @@ function updateArtikel($conn, $sql, $params, $msgSuccess, $msgFailure) {
     $stmt->close();
 }
 
-// fungsi mengupdate data artikel
+// fungsi menghapus data artikel
 function deleteArtikel($conn, $sql, $params, $msgSuccess, $msgFailure) {
     
     $stmt = $conn->prepare($sql);
